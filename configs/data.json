@@ -1,0 +1,15 @@
+{
+  "dataset": "Anthropic/hh-rlhf",
+  "subset": "helpful-base",
+  "revision": "09be8c5bbc57cb3887f3a9732ad6aa7ec602a1fa",
+  "split_seed": 20261030,
+  "sizes": {
+    "train": 5000,
+    "validation": 500,
+    "test": 1000
+  },
+  "raw_sha256": {
+    "train": "99e5153cea0df0e94a8683f5f24031585d74412becff3206fe523dfee7d11734",
+    "test": "41c3a32fe45a7075f7e32b11bd29383f9fe650287354a95568f61295a8e694da"
+  }
+}

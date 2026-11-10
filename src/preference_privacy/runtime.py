@@ -33,3 +33,25 @@ def disable_dropout(model):
     for module in model.modules():
         if isinstance(module, torch.nn.Dropout):
             module.p = 0.0
+
+
+def reset_peak_memory(device):
+    import torch
+
+    backend = getattr(torch, device, None)
+    if device in ("cuda", "npu") and backend is not None:
+        backend.synchronize()
+        backend.reset_peak_memory_stats()
+
+
+def peak_memory(device):
+    import torch
+
+    backend = getattr(torch, device, None)
+    if device in ("cuda", "npu") and backend is not None:
+        backend.synchronize()
+        return {
+            "peak_allocated_bytes": backend.max_memory_allocated(),
+            "peak_reserved_bytes": backend.max_memory_reserved(),
+        }
+    return {"peak_allocated_bytes": None, "peak_reserved_bytes": None}

@@ -2,6 +2,19 @@
 
 Report03项目的后续代码：统一训练与评估格式、部分噪声校正、多RR种子配对实验。
 
+## 19组正式实验入口
+
+主方案为1组干净DPO，加ε=1/2×3个RR种子×λ=0/0.5/1，共19组。固定第3轮为主结果，按1250/2500/3750步保留checkpoint。完整命令、资源口径、统计解释及生成盲评流程见[运行说明](docs/RUN_MAIN19.md)。配置见[main19.json](configs/main19.json)，逐组清单见[main19_matrix.csv](configs/main19_matrix.csv)。
+
+```bash
+python scripts/prepare_data.py
+python scripts/run_main19.py plan --suite runs/main19_v1 --dtype bfloat16
+# 只打印训练命令；加--execute才会运行
+python scripts/run_main19.py train --suite runs/main19_v1 --device npu
+```
+
+旧的`run_sweep.py`继续保留，用于自由探索；课程主结果使用`run_main19.py`，避免混用配置。
+
 ## 本版与旧实验的关系
 
 - `chat`默认模式：将HH历史解析为真正的多轮消息，使用模型自己的聊天模板。相邻同角色段落合并；行首角色标记容许空格；正文内的角色字样不猜测为新消息。

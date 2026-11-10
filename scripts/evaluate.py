@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import time
 from pathlib import Path
 
 
@@ -71,7 +72,13 @@ def main():
         write_json,
     )
 
+    from preference_privacy.runtime import reset_peak_memory, peak_memory
+    from preference_privacy.metrics import margin_summary
+    from preference_privacy.experiment import adapter_hash
+
+    started = time.monotonic()
     register_device(args.device)
+    reset_peak_memory(args.device)
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
     from peft import PeftModel
@@ -102,6 +109,7 @@ def main():
     encoded = [encode_pair(r, tok, fmt, length) for r in rows]
     collator = PairCollator(tok.pad_token_id)
     results = []
+    scoring_started = time.monotonic()
     with torch.no_grad():
         for start in range(0, len(encoded), args.batch_size):
             part = encoded[start : start + args.batch_size]
@@ -117,6 +125,8 @@ def main():
                         "correct": float(margin > 0) + 0.5 * float(margin == 0),
                     }
                 )
+    memory = peak_memory(args.device)
+    finished = time.monotonic()
     write_json(
         args.output_json,
         {
@@ -130,11 +140,14 @@ def main():
             "revision": revision,
             "protocol_override": args.allow_protocol_override,
             "eval_sha256": sha256(args.eval_data),
-            "metrics": {
-                "n_pairs": len(results),
-                "preference_accuracy_ties_half": sum(r["correct"] for r in results)
-                / len(results),
-                "mean_margin": sum(r["margin"] for r in results) / len(results),
+            "adapter_sha256": adapter_hash(adapter),
+            "training_config": config,
+            "metrics": margin_summary(results),
+            "cost": {
+                "evaluation_seconds_including_load": finished - started,
+                "scoring_seconds": finished - scoring_started,
+                "device": args.device,
+                **memory,
             },
             "pairs": results,
         },

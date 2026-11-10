@@ -1,0 +1,67 @@
+{
+  "name": "main19_v1",
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "training_seed": 20261030,
+  "epsilons": [
+    1.0,
+    2.0
+  ],
+  "rr_seeds": [
+    42,
+    43,
+    44
+  ],
+  "corrections": [
+    0.0,
+    0.5,
+    1.0
+  ],
+  "training": {
+    "input_format": "chat",
+    "epochs": 3,
+    "batch_size": 4,
+    "gradient_accumulation": 1,
+    "learning_rate": 0.0001,
+    "beta": 0.1,
+    "max_length": 1536,
+    "save_steps": 1250,
+    "lora_r": 16,
+    "lora_alpha": 32,
+    "gradient_checkpointing": true
+  },
+  "expected_train_pairs": 5000,
+  "checkpoint_steps": [
+    1250,
+    2500,
+    3750
+  ],
+  "primary_endpoint": "adapter",
+  "evaluation": {
+    "batch_size": 4,
+    "dtype": "float32",
+    "bootstrap_samples": 2000,
+    "bootstrap_seed": 20261110
+  },
+  "split_sha256": {
+    "train": "0f9daedc27899b11d543cf7c70324462c0aae5f3cdbc043b868f433197c35f0b",
+    "validation": "a3bf4aaa7ac84d56e9f65b6d8711bc0a4b024b93521de246a578cbee2f4b548b",
+    "test": "c6983fb445721a6008fbce31e48ec4f326c500a992ed5c8648c5def159d9de6c"
+  },
+  "generation": {
+    "n_prompts": 100,
+    "prompt_seed": 20261110,
+    "max_new_tokens": 256,
+    "max_prompt_tokens": 1536,
+    "do_sample": false,
+    "names": [
+      "initial",
+      "clean_dpo",
+      "eps_1_rr_42_lambda_0",
+      "eps_1_rr_42_lambda_0.5",
+      "eps_1_rr_42_lambda_1",
+      "eps_2_rr_42_lambda_0",
+      "eps_2_rr_42_lambda_0.5",
+      "eps_2_rr_42_lambda_1"
+    ]
+  }
+}

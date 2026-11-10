@@ -7,7 +7,7 @@ name = "preference-privacy"
 version = "0.2.0"
 description = "Label-private preference optimization with shared training and evaluation encoding"
 requires-python = ">=3.10"
-dependencies = ["torch>=2.6,<2.10", "transformers>=4.51,<5", "peft>=0.15,<0.19", "accelerate>=1,<2"]
+dependencies = ["torch>=2.6,<2.10", "transformers>=4.51,<5", "peft>=0.15,<0.19", "accelerate>=1,<2", "numpy>=1.26,<3"]
 
 [project.optional-dependencies]
 test = ["pytest>=8"]

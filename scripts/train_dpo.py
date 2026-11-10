@@ -113,7 +113,11 @@ def main():
             or manifest["output_sha256"] != data_hash
         ):
             p.error("RR seed, epsilon or file hash does not match the data sidecar")
+    from preference_privacy.runtime import reset_peak_memory, peak_memory
+
+    pipeline_started = time.monotonic()
     register_device(args.device)
+    reset_peak_memory(args.device)
     import torch
     from transformers import (
         AutoModelForCausalLM,
@@ -232,7 +236,13 @@ def main():
     write_json(out / "adapter" / "run_config.json", config)
     write_json(
         out / "train_metrics.json",
-        result.metrics | {"elapsed_seconds": time.monotonic() - start},
+        result.metrics
+        | {
+            "elapsed_seconds": time.monotonic() - start,
+            "pipeline_seconds_including_load": time.monotonic() - pipeline_started,
+            "device": args.device,
+            **peak_memory(args.device),
+        },
     )
 
 

@@ -1,0 +1,137 @@
+{
+  "checked_on": "2026-11-10",
+  "scope": "8篇核心论文正文阅读；未复现实验或逐项验证全部证明。PDF不随仓库分发。",
+  "papers": [
+    {
+      "id": "dpo",
+      "title": "Direct Preference Optimization: Your Language Model is Secretly a Reward Model",
+      "authors": [
+        "Rafael Rafailov",
+        "Archit Sharma",
+        "Eric Mitchell",
+        "Christopher D. Manning",
+        "Stefano Ermon",
+        "Chelsea Finn"
+      ],
+      "publication_status": "NeurIPS 2023",
+      "landing_url": "https://proceedings.neurips.cc/paper_files/paper/2023/hash/a85b405ed65c6477a4fe8302b5e06ce7-Abstract-Conference.html",
+      "read_locations": "§4, Eq.(7); §6",
+      "url": "https://papers.neurips.cc/paper_files/paper/2023/file/a85b405ed65c6477a4fe8302b5e06ce7-Paper-Conference.pdf",
+      "sha256": "894386aafb8581f85644773b303dd7cd96377cafe5c23e1b6b442ac6f5884e7c",
+      "bytes": 929308
+    },
+    {
+      "id": "rdpo",
+      "title": "Provably Robust DPO: Aligning Language Models with Noisy Feedback",
+      "authors": [
+        "Sayak Ray Chowdhury",
+        "Anush Kini",
+        "Nagarajan Natarajan"
+      ],
+      "publication_status": "ICML 2024, PMLR235:42258–42274",
+      "landing_url": "https://proceedings.mlr.press/v235/ray-chowdhury24a.html",
+      "read_locations": "§2–4, Eq.(9)–(13), Lemma3.1; §6.2",
+      "url": "https://raw.githubusercontent.com/mlresearch/v235/main/assets/ray-chowdhury24a/ray-chowdhury24a.pdf",
+      "sha256": "ebe79d3e8187b6d2aa86c5681e1727c6914de8468d4a7c68f2414335af6eabc1",
+      "bytes": 474767
+    },
+    {
+      "id": "private_reward",
+      "title": "Differentially Private Reward Estimation with Preference Feedback",
+      "authors": [
+        "Sayak Ray Chowdhury",
+        "Xingyu Zhou",
+        "Nagarajan Natarajan"
+      ],
+      "publication_status": "AISTATS 2024, PMLR238:4843–4851",
+      "landing_url": "https://proceedings.mlr.press/v238/ray-chowdhury24a.html",
+      "read_locations": "Definition2.2–2.3; §4–6; Theorem5.2",
+      "url": "https://proceedings.mlr.press/v238/ray-chowdhury24a/ray-chowdhury24a.pdf",
+      "sha256": "7c6a357f10f839437411a7353cbc16401233b42c4aff413b1dc6fcaa96bdc771",
+      "bytes": 920732
+    },
+    {
+      "id": "unified",
+      "title": "A Unified Theoretical Analysis of Private and Robust Offline Alignment: from RLHF to DPO",
+      "authors": [
+        "Xingyu Zhou",
+        "Yulian Wu",
+        "Francesco Orabona"
+      ],
+      "publication_status": "ICML 2025, PMLR267:79366–79388",
+      "landing_url": "https://proceedings.mlr.press/v267/zhou25ac.html",
+      "read_locations": "Definition3.4; Algorithm1; Theorem6.3; AppendixD",
+      "url": "https://raw.githubusercontent.com/mlresearch/v267/main/assets/zhou25ac/zhou25ac.pdf",
+      "sha256": "e7f3eb48f4c23bc0059dd54ff40d5a7ffb2191dd0b25cb257146ead9d475c481",
+      "bytes": 420736
+    },
+    {
+      "id": "squarepo",
+      "title": "SquareχPO: Differentially Private and Robust χ²-Preference Optimization in Offline Direct Alignment",
+      "authors": [
+        "Xingyu Zhou",
+        "Yulian Wu",
+        "Wenqian Weng",
+        "Francesco Orabona"
+      ],
+      "publication_status": "作者网站PDF；本次未确认正式出版场所/年份",
+      "landing_url": "https://xingyuzhou.org/publications/TPDP-square.pdf",
+      "read_locations": "PDF第3–4页, Algorithm1, Assumptions3.2–3.3, Theorem3.5",
+      "url": "https://xingyuzhou.org/publications/TPDP-square.pdf",
+      "sha256": "13d6d66d5eaf8fd05dd7215a437d30cd0ba92de4da57b13aed361e7edc60f63c",
+      "bytes": 382768
+    },
+    {
+      "id": "privdpo",
+      "title": "Private Direct Preference Optimization for LLM Alignment",
+      "authors": [
+        "Yangfan Jiang",
+        "Fei Wei",
+        "Ergute Bao",
+        "Xiaokui Xiao",
+        "Yaliang Li",
+        "Bolin Ding"
+      ],
+      "publication_status": "arXiv:2608.05040v1；作者注明CCS2026接收的扩展版",
+      "landing_url": "https://arxiv.org/abs/2608.05040",
+      "read_locations": "Definition3.1–3.3; Algorithm1; Theorem4.1后Remark; §5",
+      "url": "https://arxiv.org/pdf/2608.05040",
+      "sha256": "e98ff57e1efb4a18db5efdfd136529e8fdbda5565214000862772a209ed93e6d",
+      "bytes": 826797
+    },
+    {
+      "id": "dpprefsyn",
+      "title": "Differentially Private Preference Data Synthesis for Large Language Model Alignment",
+      "authors": [
+        "Fengyu Gao",
+        "Jing Yang"
+      ],
+      "publication_status": "ICML 2026, PMLR306:33724–33749",
+      "landing_url": "https://proceedings.mlr.press/v306/gao26ae.html",
+      "read_locations": "Definition3.1; Algorithm1; §5; AppendixA",
+      "url": "https://raw.githubusercontent.com/mlresearch/v306/main/assets/gao26ae/gao26ae.pdf",
+      "sha256": "f109363ba74c518eff55570ef00697717bf7b9466d2053e8427a0a9f345497a9",
+      "bytes": 1473974
+    },
+    {
+      "id": "user_rlhf",
+      "title": "Towards User-level Private Reinforcement Learning with Human Feedback",
+      "authors": [
+        "Jiaming Zhang",
+        "Mingxi Lei",
+        "Meng Ding",
+        "Mengdi Li",
+        "Zihang Xiang",
+        "Difei Xu",
+        "Jinhui Xu",
+        "Di Wang"
+      ],
+      "publication_status": "COLM2025官方条目已核实；正文阅读版本为arXiv:2502.17515v1",
+      "landing_url": "https://proceedings.colm.cc/paper_files/paper/2025/hash/1df4afb0b4ebf492a41218ce16b6d8df-Abstract-Conference.html",
+      "read_locations": "Definition2; Algorithm1–2; §6.1",
+      "url": "https://arxiv.org/pdf/2502.17515",
+      "sha256": "a285c83970e6c3d3094b6a7f01e0fbb4bcb56849e0944b58dfd5b37a356c4789",
+      "bytes": 1030169
+    }
+  ]
+}

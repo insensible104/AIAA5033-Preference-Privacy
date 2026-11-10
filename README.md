@@ -2,6 +2,10 @@
 
 Report03项目的后续代码：统一训练与评估格式、部分噪声校正、多RR种子配对实验。
 
+## 文献与研究定位
+
+已核实8篇核心论文的正文，见[文献比较表](docs/literature/COMPARISON.md)、[逐篇阅读笔记](docs/literature/READING_NOTES.md)和[创新设计](docs/literature/INNOVATION.md)。当前部分校正在数学上等价于较小校正噪声率的rDPO，不作为新损失声称；建议以有限数据下的校正收益和无干净标签的模型选择为研究问题。扩展实验尚未实现，现有19组协议保持不变。
+
 ## 19组正式实验入口
 
 主方案为1组干净DPO，加ε=1/2×3个RR种子×λ=0/0.5/1，共19组。固定第3轮为主结果，按1250/2500/3750步保留checkpoint。完整命令、资源口径、统计解释及生成盲评流程见[运行说明](docs/RUN_MAIN19.md)。配置见[main19.json](configs/main19.json)，逐组清单见[main19_matrix.csv](configs/main19_matrix.csv)。

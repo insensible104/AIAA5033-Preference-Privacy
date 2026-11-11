@@ -1,4 +1,4 @@
-"""Single-device LoRA DPO with a fixed reference and explicit partial correction."""
+"""Single-device LoRA DPO with a fixed reference and explicit backward/forward correction."""
 
 import argparse
 import importlib.metadata
@@ -20,7 +20,9 @@ def main():
     p.add_argument("--output-dir", required=True)
     p.add_argument("--input-format", choices=["chat", "raw_hh"], default="chat")
     p.add_argument(
-        "--group", choices=["dpo", "rr_dpo", "rr_rdpo", "partial"], required=True
+        "--group",
+        choices=["dpo", "rr_dpo", "rr_rdpo", "partial", "forward"],
+        required=True,
     )
     p.add_argument("--epsilon", type=float)
     p.add_argument("--rr-seed", type=int)
@@ -67,7 +69,9 @@ def main():
             p.error("RR groups require finite epsilon > 0 and rr-seed")
         if args.group != "partial" and args.correction is not None:
             p.error("Only group partial accepts --correction")
-        correction = {"rr_dpo": 0.0, "rr_rdpo": 1.0}.get(args.group, args.correction)
+        correction = {"rr_dpo": 0.0, "rr_rdpo": 1.0, "forward": 0.0}.get(
+            args.group, args.correction
+        )
         if (
             correction is None
             or not math.isfinite(correction)
@@ -165,6 +169,7 @@ def main():
     rows = load_rows(data_path)
     encoded = [encode_pair(r, tok, args.input_format, args.max_length) for r in rows]
     config = vars(args) | {
+        "objective": "forward" if args.group == "forward" else "backward",
         "rho": rho,
         "correction": correction,
         "data_sha256": data_hash,
@@ -185,6 +190,7 @@ def main():
         beta=args.beta,
         rho=rho,
         correction=correction,
+        objective=config["objective"],
         args=TrainingArguments(
             output_dir=str(out),
             per_device_train_batch_size=args.batch_size,

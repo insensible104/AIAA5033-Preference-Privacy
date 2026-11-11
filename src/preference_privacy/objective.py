@@ -15,6 +15,18 @@ def partial_loss(margin, rho, correction):
     return (1 - correction) * ordinary + correction * corrected
 
 
+def forward_loss(margin, rho):
+    """Negative log noisy-label likelihood, evaluated stably in log space."""
+    if not math.isfinite(rho) or not 0 <= rho < 0.5:
+        raise ValueError("rho must be in [0, 0.5)")
+    if rho == 0:
+        return F.softplus(-margin)
+    return -torch.logaddexp(
+        F.logsigmoid(margin) + math.log1p(-rho),
+        F.logsigmoid(-margin) + math.log(rho),
+    )
+
+
 def completion_logps(model, batch):
     logits = (
         model(

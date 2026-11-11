@@ -1,0 +1,14 @@
+{
+  "name": "selection12_v1",
+  "alpha": 0.05,
+  "sizes": [100, 250, 500],
+  "repeats": 20,
+  "rr_seed": 20261111,
+  "subset_seed": 20261112,
+  "epsilon_val": {"1": 1.0, "2": 2.0},
+  "families": ["rr_dpo", "partial", "rr_rdpo", "forward"],
+  "endpoints": ["checkpoint-1250", "checkpoint-2500", "adapter"],
+  "baseline_family": "rr_dpo",
+  "baseline_endpoint": "adapter",
+  "tie_break": "registered_candidate_order"
+}

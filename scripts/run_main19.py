@@ -1,4 +1,4 @@
-"""Plan, train, validate, freeze and test the fixed 19-run course experiment."""
+"""Plan, train, validate, freeze and test the fixed main19 or paired forward6 experiment."""
 
 import argparse
 from pathlib import Path
@@ -7,7 +7,9 @@ import sys
 from preference_privacy.runtime import load_rows, sha256, write_json
 from preference_privacy.rr import generate_rr
 from preference_privacy.experiment import (
-    main19_jobs,
+    experiment_jobs,
+    validate_manifest,
+    validate_paired_suites,
     adapter_hash,
     read_json,
     validate_evaluation,
@@ -27,6 +29,10 @@ def main():
     p.add_argument("stage", choices=["plan", "train", "validation", "freeze", "test"])
     p.add_argument("--suite", required=True)
     p.add_argument("--config", default="configs/main19.json")
+    p.add_argument(
+        "--paired-suite",
+        help="Required for forward6 plan; reuse main19 RR files and model identity",
+    )
     p.add_argument("--data-dir", default="data/processed")
     p.add_argument("--model")
     p.add_argument("--revision")
@@ -49,7 +55,17 @@ def main():
         if suite.exists() and any(suite.iterdir()):
             p.error("Suite directory must be empty")
         config = read_json(args.config)
-        jobs = main19_jobs(config)
+        jobs = experiment_jobs(config)
+        paired = None
+        if config.get("suite_kind") == "forward6":
+            if not args.paired_suite:
+                p.error("forward6 requires --paired-suite")
+            paired = read_json(Path(args.paired_suite) / "experiment.json")
+            validate_manifest(paired)
+            if args.model or args.revision:
+                p.error("forward6 inherits model/revision from paired suite")
+            args.data_dir = paired["data_dir"]
+            args.dtype = paired["training_dtype"]
         data_dir = Path(args.data_dir).resolve()
         # Verify all split identities without reading test labels for model selection.
         for split, expected in config["split_sha256"].items():
@@ -57,47 +73,53 @@ def main():
                 p.error(f"{split} hash differs from registered split")
         if len(load_rows(data_dir / "train.jsonl")) != config["expected_train_pairs"]:
             p.error("Unexpected training count")
-        model = args.model or config["model"]
+        model = paired["model"] if paired else (args.model or config["model"])
         if Path(model).exists():
             model = str(Path(model).resolve())
         # Resolve a remote model to an immutable revision; only metadata is fetched.
-        revision = args.revision
-        if not Path(model).exists():
+        revision = paired["revision"] if paired else args.revision
+        if not paired and not Path(model).exists():
             from huggingface_hub import model_info
 
             revision = model_info(model, revision=revision).sha
         for job in jobs:
             data = data_dir / "train.jsonl"
-            if job["epsilon"] is not None:
+            if paired:
+                original = next(
+                    j
+                    for j in paired["jobs"]
+                    if j["epsilon"] == job["epsilon"] and j["rr_seed"] == job["rr_seed"]
+                )
+                data = Path(original["data"])
+                if sha256(data) != original["data_sha256"]:
+                    p.error("Paired RR data changed")
+            elif job["epsilon"] is not None:
                 data = generate_rr(data, suite / "rr", job["epsilon"], job["rr_seed"])
             job["data"] = str(data)
             job["data_sha256"] = sha256(data)
-        write_json(
-            manifest_path,
-            {
-                "config": config,
-                "model": model,
-                "revision": revision,
-                "data_dir": str(data_dir),
-                "training_dtype": args.dtype,
-                "jobs": jobs,
-            },
-        )
+        manifest = {
+            "config": config,
+            "model": model,
+            "revision": revision,
+            "data_dir": str(data_dir),
+            "training_dtype": args.dtype,
+            "jobs": jobs,
+        }
+        if paired:
+            validate_paired_suites(paired, manifest)
+        write_json(manifest_path, manifest)
         print(f"Prepared {len(jobs)} jobs: {manifest_path}")
         return
     manifest = read_json(manifest_path)
     config = manifest["config"]
-    if len(manifest["jobs"]) != 19 or [j["name"] for j in manifest["jobs"]] != [
-        j["name"] for j in main19_jobs(config)
-    ]:
-        p.error("Invalid main19 manifest")
+    validate_manifest(manifest)
     selected = set(args.jobs or [j["name"] for j in manifest["jobs"]])
     if not selected <= {j["name"] for j in manifest["jobs"]}:
         p.error("Unknown job name")
     manifest_sha = sha256(manifest_path)
     if args.stage in ["freeze", "test"]:
         if selected != {j["name"] for j in manifest["jobs"]} and args.stage == "freeze":
-            p.error("Freeze requires all 19 jobs")
+            p.error("Freeze requires all jobs")
         current = {
             j["name"]: adapter_hash(suite / "models" / j["name"] / "adapter")
             for j in manifest["jobs"]

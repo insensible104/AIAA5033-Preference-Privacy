@@ -78,7 +78,70 @@ def validate_evaluation(result, manifest, job, split):
         "seed": config["training_seed"],
         "data_sha256": job["data_sha256"],
     }
+    if job["group"] == "forward":
+        expected_training["objective"] = "forward"
     expected_training.update(config["training"])
     for key, value in expected_training.items():
         if trained.get(key) != value:
             raise ValueError(f"Training configuration mismatch: {key}")
+
+
+def experiment_jobs(config):
+    jobs = main19_jobs(config)
+    kind = config.get("suite_kind", "main19")
+    if kind == "main19":
+        return jobs
+    if kind != "forward6":
+        raise ValueError("Unknown suite_kind")
+    return [
+        dict(
+            name=f"eps_{eps:g}_rr_{rr}_forward",
+            group="forward",
+            epsilon=eps,
+            rr_seed=rr,
+            correction=0.0,
+        )
+        for eps in config["epsilons"]
+        for rr in config["rr_seeds"]
+    ]
+
+
+def validate_manifest(manifest):
+    expected = experiment_jobs(manifest["config"])
+    if len(manifest["jobs"]) != len(expected):
+        raise ValueError("Invalid job count")
+    for actual, wanted in zip(manifest["jobs"], expected):
+        if any(actual.get(k) != v for k, v in wanted.items()):
+            raise ValueError("Invalid job identity")
+
+
+def validate_paired_suites(main, forward):
+    validate_manifest(main)
+    validate_manifest(forward)
+    if (
+        main["config"].get("suite_kind", "main19") != "main19"
+        or forward["config"].get("suite_kind") != "forward6"
+    ):
+        raise ValueError("Expected main19 and forward6 suites")
+    for key in ("model", "revision", "training_dtype", "data_dir"):
+        if main.get(key) != forward.get(key):
+            raise ValueError(f"Paired suites mismatch: {key}")
+    for key in (
+        "training",
+        "training_seed",
+        "split_sha256",
+        "checkpoint_steps",
+        "evaluation",
+    ):
+        if main["config"][key] != forward["config"][key]:
+            raise ValueError(f"Paired configuration mismatch: {key}")
+    for job in forward["jobs"]:
+        paired = [
+            j
+            for j in main["jobs"]
+            if j["epsilon"] == job["epsilon"] and j["rr_seed"] == job["rr_seed"]
+        ]
+        if len(paired) != 3 or any(
+            j["data_sha256"] != job["data_sha256"] for j in paired
+        ):
+            raise ValueError("Forward must use identical RR training data")

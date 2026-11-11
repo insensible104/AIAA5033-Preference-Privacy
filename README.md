@@ -4,7 +4,11 @@ Report03项目的后续代码：统一训练与评估格式、部分噪声校正
 
 ## 文献与研究定位
 
-已核实8篇核心论文的正文，见[文献比较表](docs/literature/COMPARISON.md)、[逐篇阅读笔记](docs/literature/READING_NOTES.md)和[创新设计](docs/literature/INNOVATION.md)。当前部分校正在数学上等价于较小校正噪声率的rDPO，不作为新损失声称；建议以有限数据下的校正收益和无干净标签的模型选择为研究问题。扩展实验尚未实现，现有19组协议保持不变。
+已核实8篇核心论文的正文，见[文献比较表](docs/literature/COMPARISON.md)、[逐篇阅读笔记](docs/literature/READING_NOTES.md)和[创新设计](docs/literature/INNOVATION.md)。当前部分校正在数学上等价于较小校正噪声率的rDPO，不作为新损失声称；建议以有限数据下的校正收益和无干净标签的模型选择为研究问题。已补齐6组forward和带噪验证选择代码，现有19组协议保持不变。
+
+## 新增：forward基线与带噪模型选择
+
+见[完整运行说明](docs/RUN_SELECTION_FORWARD.md)。新增6组forward直接复用主实验RR数据；每个隐私条件的选择实验固定12个候选，独立RR验证标签，先冻结选择再访问测试。代码、配置和无训练测试已完成，尚未启动训练或模型评估。
 
 ## 19组正式实验入口
 
